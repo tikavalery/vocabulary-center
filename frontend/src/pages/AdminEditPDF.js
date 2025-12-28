@@ -19,6 +19,7 @@ const AdminEditPDF = () => {
 
   useEffect(() => {
     fetchPDF();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchPDF = async () => {

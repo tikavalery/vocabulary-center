@@ -16,6 +16,7 @@ const Home = () => {
   useEffect(() => {
     fetchPDFs();
     fetchLanguages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLanguage, sort, currentPage]);
 
   const fetchPDFs = async () => {

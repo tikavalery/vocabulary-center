@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { orderAPI } from '../utils/api';
 
 const CheckoutSuccess = () => {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState(null);

@@ -17,6 +17,7 @@ const PDFDetails = () => {
   useEffect(() => {
     fetchPDF();
     checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const checkAuth = async () => {

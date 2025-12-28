@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { authAPI, orderAPI, downloadAPI } from '../utils/api';
+import { authAPI, orderAPI } from '../utils/api';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
