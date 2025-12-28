@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Vocabulary Center - MERN Stack Ecommerce Application
 
 A complete MERN stack ecommerce web application for selling downloadable language vocabulary PDFs. Built with React, Node.js, Express, MongoDB, JWT authentication, Google OAuth, Stripe payments, and Cloudinary file storage.
@@ -356,3 +357,6 @@ After running `seed.js`:
 
 ISC
 
+=======
+# vocabulary-center
+>>>>>>> 7b769abc813668010317fafe060486dc1c0bed1e
