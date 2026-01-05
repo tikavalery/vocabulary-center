@@ -1,5 +1,17 @@
 // API configuration and utility functions
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Use relative path if no API URL is configured (assumes same origin)
+// Otherwise use the configured API URL or default to localhost for development
+const getAPIUrl = () => {
+  // If explicitly set, use it
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL;
+  }
+  // If no API URL is set, use relative path (works when frontend and backend are on same origin)
+  // This works for Heroku deployment where frontend is served from the same app
+  return '/api';
+};
+
+const API_URL = getAPIUrl();
 
 // Get auth token from localStorage or cookie
 const getToken = () => {

@@ -34,8 +34,10 @@ const Home = () => {
       setPagination(data.pagination);
       setError(null);
     } catch (err) {
-      setError('Failed to load PDFs');
+      const errorMessage = err.message || 'Failed to load PDFs';
+      setError(errorMessage);
       console.error('Error fetching PDFs:', err);
+      console.error('API URL being used:', process.env.REACT_APP_API_URL || '/api');
     } finally {
       setLoading(false);
     }
