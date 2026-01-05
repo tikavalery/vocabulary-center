@@ -41,15 +41,49 @@ require('./config/passport');
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+// CORS configuration - allow requests from CLIENT_URL or same origin
+// When frontend is served from same app (production), allow same-origin requests
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (same-origin requests, mobile apps, Postman)
+    // This is important when frontend and backend are on the same domain
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    // Get allowed origins
+    const allowedOrigins = [
+      process.env.CLIENT_URL,
+      'http://localhost:3000',
+      'http://localhost:5000'
+    ].filter(Boolean); // Remove undefined values
+    
+    // If CLIENT_URL is not set (same-origin deployment), allow all origins
+    // Otherwise, check if origin is in allowed list
+    if (!process.env.CLIENT_URL || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`CORS blocked origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
-}));
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(passport.initialize());
 
+
+// Logging middleware for API routes (development/debugging)
+if (process.env.NODE_ENV === 'production') {
+  app.use('/api', (req, res, next) => {
+    console.log(`[API] ${req.method} ${req.path}`);
+    next();
+  });
+}
 
 // Routes
 app.use('/api/auth', authRoutes);
