@@ -10,6 +10,11 @@ const passport = require('passport');
 // Load environment variables
 dotenv.config();
 
+//  // "scripts": {
+  //   "start": "node server.js",
+  //   "dev": "nodemon server.js"
+  // },
+
 // Import routes
 const authRoutes = require('./routes/auth');
 const pdfRoutes = require('./routes/pdfs');
@@ -68,6 +73,14 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/vocabular
   console.error('MongoDB connection error:', error);
   process.exit(1);
 });
+
+if(process.env.NODE_ENV === 'production'){
+    app.use(express.static('frontend/build'))
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
+    })
+}
+
 
 module.exports = app;
 

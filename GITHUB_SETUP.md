@@ -73,6 +73,7 @@ git commit -m "Initial commit: Vocabulary Center MERN stack app"
 ```bash
 # Replace 'yourusername' with your GitHub username
 git remote add origin https://github.com/yourusername/vocabulary-center.git
+git remote add origin https://github.com/tikavalery/vocabulary-center.git
 ```
 
 **Or if you prefer SSH** (if you have SSH keys set up):

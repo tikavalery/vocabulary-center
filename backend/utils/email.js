@@ -31,6 +31,7 @@ const createTransporter = () => {
   // Note: If you don't want to configure Gmail, just remove SMTP_USER and SMTP_PASS
   // and the reset link will be logged to console in development mode
   if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+
     const isProduction = process.env.NODE_ENV === 'production';
     return nodemailer.createTransport({
       service: 'gmail',
@@ -53,16 +54,21 @@ const createTransporter = () => {
 // Send password reset email
 const sendPasswordResetEmail = async (email, resetToken) => {
   const transporter = createTransporter();
+ 
   const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+ 
   const resetUrl = `${clientUrl}/reset-password?token=${resetToken}`;
 
   // If email is not configured, log the reset link for development
   if (!transporter) {
+    console.log("I am in no transporter")
     // Check if we're in production mode (explicitly check for 'production')
     const isProduction = process.env.NODE_ENV === 'production';
     
     if (isProduction) {
-      // In production, email MUST be configured
+    
+      // In production, em
+      // ail MUST be configured
       const errorMsg = 'Email service not configured. Please configure SMTP settings in your .env file.';
       console.error('❌ ' + errorMsg);
       throw new Error(errorMsg);

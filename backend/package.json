@@ -4,9 +4,16 @@
   "description": "Backend for vocabulary center ecommerce",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
-  },
+  "start": "node server.js",
+  "dev:server": "nodemon server.js",
+  "dev:client": "cd frontend && npm start",
+  "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+  "install:server": "npm install",
+  "install:client": "cd frontend && npm install",
+  "install:all": "npm run install:server && npm run install:client",
+  "build:client": "cd frontend && npm run build",
+  "heroku-postbuild": "npm run build:client"
+},
   "engines": {
     "node": "18.x",
     "npm": "9.x"
