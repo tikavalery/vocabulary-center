@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { authAPI, orderAPI } from '../utils/api';
+import { authAPI, orderAPI, getAPIUrl } from '../utils/api';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -44,8 +44,7 @@ const Dashboard = () => {
       }
 
       // Get download URL from backend (which will proxy the PDF)
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-      const downloadUrl = `${API_URL}/download/${pdfId}`;
+      const downloadUrl = `${getAPIUrl()}/download/${pdfId}`;
       
       // Fetch the PDF with authentication header
       const response = await fetch(downloadUrl, {

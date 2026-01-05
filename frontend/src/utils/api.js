@@ -1,7 +1,7 @@
 // API configuration and utility functions
 // Use relative path if no API URL is configured (assumes same origin)
 // Otherwise use the configured API URL or default to localhost for development
-const getAPIUrl = () => {
+export const getAPIUrl = () => {
   // If explicitly set, use it
   if (process.env.REACT_APP_API_URL) {
     return process.env.REACT_APP_API_URL;
