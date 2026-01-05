@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { pdfAPI } from '../utils/api';
+import { pdfAPI, getAPIUrl } from '../utils/api';
 
 const Home = () => {
   const [pdfs, setPdfs] = useState([]);
@@ -37,7 +37,7 @@ const Home = () => {
       const errorMessage = err.message || 'Failed to load PDFs';
       setError(errorMessage);
       console.error('Error fetching PDFs:', err);
-      console.error('API URL being used:', process.env.REACT_APP_API_URL || '/api');
+      console.error('API URL being used:', getAPIUrl());
     } finally {
       setLoading(false);
     }
