@@ -9,6 +9,24 @@ const { sendPasswordResetEmail } = require('../utils/email');
 
 const router = express.Router();
 
+// Helper function to get frontend URL
+// In production, if CLIENT_URL is not set, use the same origin as the request
+const getFrontendUrl = (req) => {
+  if (process.env.CLIENT_URL) {
+    return process.env.CLIENT_URL;
+  }
+  
+  // In production, construct URL from request (same origin)
+  if (process.env.NODE_ENV === 'production') {
+    const protocol = req.protocol || 'https';
+    const host = req.get('host') || req.hostname;
+    return `${protocol}://${host}`;
+  }
+  
+  // Development default
+  return 'http://localhost:3000';
+};
+
 // Generate JWT token
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, {
@@ -128,7 +146,7 @@ router.get('/google', (req, res, next) => {
   // Check if Google OAuth is configured
   if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
     console.error('Google OAuth request received but credentials are not configured');
-    const frontendUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+    const frontendUrl = getFrontendUrl(req);
     return res.redirect(`${frontendUrl}/login?error=oauth_not_configured`);
   }
   passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
@@ -139,7 +157,7 @@ router.get('/google/callback',
     // Check if Google OAuth is configured
     if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
       console.error('Google OAuth callback received but credentials are not configured');
-      const frontendUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+      const frontendUrl = getFrontendUrl(req);
       return res.redirect(`${frontendUrl}/login?error=oauth_not_configured`);
     }
     passport.authenticate('google', { session: false, failureRedirect: '/api/auth/google/error' })(req, res, next);
@@ -164,11 +182,11 @@ router.get('/google/callback',
       });
 
       // Redirect to frontend with token
-      const frontendUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+      const frontendUrl = getFrontendUrl(req);
       res.redirect(`${frontendUrl}/auth/google/callback?token=${token}`);
     } catch (error) {
       console.error('Google OAuth callback error:', error);
-      const frontendUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+      const frontendUrl = getFrontendUrl(req);
       res.redirect(`${frontendUrl}/login?error=oauth_failed`);
     }
   }
@@ -176,7 +194,7 @@ router.get('/google/callback',
 
 // Error route for OAuth failures
 router.get('/google/error', (req, res) => {
-  const frontendUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+  const frontendUrl = getFrontendUrl(req);
   res.redirect(`${frontendUrl}/login?error=oauth_failed`);
 });
 
@@ -259,7 +277,8 @@ router.post('/forgot-password', [
         await user.save();
       } else {
         // In development, even if email fails, log the token so user can still reset
-        const resetUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+        const frontendUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+        const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
         console.log('\n⚠️  Email sending failed, but here is the reset link:');
         console.log(`Reset URL: ${resetUrl}`);
         console.log(`Token: ${resetToken}\n`);

@@ -7,6 +7,23 @@ const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
+// Helper function to get frontend URL (same as in auth.js)
+const getFrontendUrl = (req) => {
+  if (process.env.CLIENT_URL) {
+    return process.env.CLIENT_URL;
+  }
+  
+  // In production, construct URL from request (same origin)
+  if (process.env.NODE_ENV === 'production') {
+    const protocol = req.protocol || 'https';
+    const host = req.get('host') || req.hostname;
+    return `${protocol}://${host}`;
+  }
+  
+  // Development default
+  return 'http://localhost:3000';
+};
+
 // Create Stripe checkout session
 router.post('/create-checkout-session', authenticate, async (req, res) => {
   try {
@@ -46,8 +63,8 @@ router.post('/create-checkout-session', authenticate, async (req, res) => {
         }
       ],
       mode: 'payment',
-      success_url: `${process.env.CLIENT_URL || 'http://localhost:3000'}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.CLIENT_URL || 'http://localhost:3000'}/checkout/cancel`,
+      success_url: `${getFrontendUrl(req)}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${getFrontendUrl(req)}/checkout/cancel`,
       client_reference_id: pdfId.toString(),
       customer_email: user.email,
       metadata: {
