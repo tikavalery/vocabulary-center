@@ -97,12 +97,22 @@ app.get('/api/health', (req, res) => {
 });
 
 // Serve static files from React app in production
+// IMPORTANT: This must come AFTER all API routes
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/build')));
+  // Serve static files only for non-API routes
+  app.use((req, res, next) => {
+    // Skip static file serving for API routes - they should have been handled above
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    // Serve static files for all other routes
+    express.static(path.join(__dirname, '../frontend/build'))(req, res, next);
+  });
   
-  // Handle React routing, return all requests to React app
+  // Handle React routing - catch-all for non-API routes
+  // This serves index.html for client-side routing
   app.get('*', (req, res) => {
-    // Don't serve React app for API routes
+    // Double-check: never serve React app for API routes
     if (req.path.startsWith('/api')) {
       return res.status(404).json({ message: 'API route not found' });
     }
