@@ -4,6 +4,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const passport = require('passport');
+const path = require('path');
 
 
 
@@ -48,6 +49,20 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
 });
 
+// Serve static files from React app in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
+  
+  // Handle React routing, return all requests to React app
+  app.get('*', (req, res) => {
+    // Don't serve React app for API routes
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ message: 'API route not found' });
+    }
+    res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+  });
+}
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -73,13 +88,6 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/vocabular
   console.error('MongoDB connection error:', error);
   process.exit(1);
 });
-
-if(process.env.NODE_ENV === 'production'){
-    app.use(express.static('frontend/build'))
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
-    })
-}
 
 
 module.exports = app;
